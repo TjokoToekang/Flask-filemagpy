@@ -1,0 +1,94 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 960px;
+}
+
+footer {
+    background-color: #222;
+    color: white;
+}
+
+#music-player {
+    background-color: #222;
+    color: white;
+    border-top: 2px solid #444;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 15px;
+    box-sizing: border-box;
+}
+
+#music-player h5 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.logo {
+        max-width: 100%; /* Sesuaikan ukuran logo dengan container */
+        height: auto;    /* Pastikan proporsi gambar tetap */
+        max-height: 120px; /* Ukuran maksimum logo (desktop) */
+    }
+
+/* Aturan Khusus untuk Ponsel */
+@media (max-width: 768px) {
+	.logo {
+		max-height: 80px; /* Ukuran maksimum logo di ponsel */
+    }
+}
+
+#music-player .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+#music-player button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: black;
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+#music-player button:hover {
+    background-color: #ddd;
+}
+
+#music-player #progress-bar {
+    width: 100%;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    #music-player .controls {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    #music-player button {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+
+

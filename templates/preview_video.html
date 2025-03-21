@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">Preview Video</h2>
+<video controls style="width: 100%;">
+    <source src="{{ file_path }}" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+{% endblock %}

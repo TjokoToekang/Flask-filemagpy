@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File or Folder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-dark">
+    {% extends "base.html" %}
+    {% block content %}
+    <div class="container">
+        <h1 class="text-center text-light mb-4">Upload File or Folder</h1>
+
+        <!-- Form Upload File -->
+        <form action="/upload" method="post" enctype="multipart/form-data" class="p-4 bg-white border rounded mb-4">
+            <h4 class="text-dark mb-3">Upload Single File</h4>
+            <div class="mb-3">
+                <label for="file" class="form-label">Select File</label>
+                <input type="file" name="file" id="file" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Select Custom Path (Optional)</label>
+                {% if directories %}
+                    <div>
+                        {% for directory in directories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="custom_path" id="path_{{ directory }}" value="{{ directory }}">
+                                <label class="form-check-label" for="path_{{ directory }}">
+                                    {{ directory }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No custom paths available. Create a new directory <a href="/create_directory">here</a>.</p>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Upload File</button>
+        </form>
+
+        <!-- Form Upload Folder -->
+        <form id="folder-upload-form" class="p-4 bg-white border rounded">
+            <h4 class="text-dark mb-3">Upload Folder</h4>
+            <div class="mb-3">
+                <label for="folder-upload" class="form-label">Select Folder</label>
+                <input type="file" id="folder-upload" name="files" webkitdirectory multiple class="form-control">
+            </div>
+            <button type="submit" class="btn btn-secondary w-100">Upload Folder</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="/" class="">
+                <img src="../static/logo.png" alt="CBM Logo" style="width: 80px; height: 80px;">
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript untuk Upload Folder -->
+    <script>
+        document.getElementById('folder-upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            const files = document.getElementById('folder-upload').files;
+
+            for (let file of files) {
+                formData.append('files[]', file); // Tambahkan semua file ke FormData
+            }
+
+            const response = await fetch('/upload_folder', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            alert(result.message || 'Upload folder berhasil!');
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

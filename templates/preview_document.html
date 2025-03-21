@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Preview Document</h2>
+<embed src="{{ file_path }}" width="100%" height="600px" />
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script>
+        const fileType = "{{ file_type }}";
+        const fileUrl = "{{ file_url }}";
+
+        async function loadOfficeFile() {
+            const response = await fetch(fileUrl);
+            const arrayBuffer = await response.arrayBuffer();
+
+            if (fileType === 'docx') {
+                mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+                    .then(function (result) {
+                        document.getElementById('office-viewer').innerHTML = `<pre>${result.value}</pre>`;
+                    }).catch(function (err) {
+                        document.getElementById('office-viewer').innerHTML = '<p>Error loading document.</p>';
+                    });
+            } else if (fileType === 'xlsx') {
+                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = XLSX.utils.sheet_to_html(workbook.Sheets[sheetName]);
+                document.getElementById('office-viewer').innerHTML = sheet;
+            } else if (fileType === 'pptx') {
+                document.getElementById('office-viewer').innerHTML = '<p>Preview for .pptx is not yet fully supported.</p>';
+            }
+        }
+
+        loadOfficeFile();
+    </script>
+{% endblock %}

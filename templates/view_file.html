@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center text-white">Files in {{ category }}</h2>
+
+<!-- Form untuk Filter -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <form method="get" class="d-flex">
+        <select name="sort_by" class="form-select me-2">
+            <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Sort by Name</option>
+            <option value="size" {% if sort_by == 'size' %}selected{% endif %}>Sort by Size</option>
+            <option value="mtime" {% if sort_by == 'mtime' %}selected{% endif %}>Sort by Last Modified</option>
+        </select>
+        <select name="order" class="form-select me-2">
+            <option value="asc" {% if order == 'asc' %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if order == 'desc' %}selected{% endif %}>Descending</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Apply Filter</button>
+    </form>
+</div>
+
+<!-- Daftar File -->
+<ul class="list-group">
+    {% for file in files %}
+    <li class="list-group-item">
+        <div class="row align-items-center">
+            <!-- Nama File -->
+            <div class="col-12 col-md-4">
+                <span>{{ file.name }}</span>
+            </div>
+
+            <!-- Detail File -->
+            <div class="col-12 col-md-4">
+                <small>
+                    Size: {{ (file.size / 1024) | round(2) }} KB<br>
+                    Last Modified: {{ file.mtime | datetimeformat }}
+                </small>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="col-12 col-md-4 text-start text-md-end mt-2 mt-md-0">
+                {% if is_custom %}
+                <!-- Custom Directory -->
+                <a href="/preview/custom/{{ category }}/{{ file.name }}" class="btn btn-sm btn-info mb-1 mb-md-0">Preview</a>
+                <a href="/download/custom/{{ category }}/{{ file.name }}" class="btn btn-sm btn-success mb-1 mb-md-0">Download</a>
+                <form action="/delete/custom/{{ category }}/{{ file.name }}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger mb-1 mb-md-0">Delete</button>
+                </form>
+                {% else %}
+                <!-- Default Category -->
+                <a href="/preview/{{ category }}/{{ file.name }}" class="btn btn-sm btn-info mb-1 mb-md-0">Preview</a>
+                <a href="/download/{{ category }}/{{ file.name }}" class="btn btn-sm btn-success mb-1 mb-md-0">Download</a>
+                <form action="/delete/{{ category }}/{{ file.name }}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger mb-1 mb-md-0">Delete</button>
+                </form>
+                {% endif %}
+                <button class="btn btn-sm btn-warning" onclick="showRenameModal('{{ file.name }}', '{{ category }}', {{ is_custom|tojson|safe }})">Rename</button>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+
+<!-- Modal untuk Rename -->
+<div class="modal fade" id="renameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="renameForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rename File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="newName" class="form-label">New File Name</label>
+                    <input type="text" id="newName" name="new_name" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Rename</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script untuk Menangani Rename -->
+<script>
+    function showRenameModal(fileName, category, isCustom) {
+        const form = document.getElementById('renameForm');
+        if (isCustom) {
+            form.action = `/rename/custom/${category}/${fileName}`;
+        } else {
+            form.action = `/rename/${category}/${fileName}`;
+        }
+        const input = document.getElementById('newName');
+        input.value = fileName; // Default value
+        const modal = new bootstrap.Modal(document.getElementById('renameModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}

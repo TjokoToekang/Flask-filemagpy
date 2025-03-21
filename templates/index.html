@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-4">
+    <img src="../static/logo.png" alt="ClearByMe Logo" class="logo">
+</div>
+<p class="text-center text-light">Easily upload, view, and organize your files</p>
+
+<!-- Tombol Kategori File -->
+<div class="row text-center mb-4">
+    <div class="col-md-4">
+        <a href="/upload" class="btn btn-primary w-100 py-3 mb-3">Upload File</a>
+    </div>
+    <div class="col-md-4">
+        <a href="/files/documents" class="btn btn-success w-100 py-3 mb-3">Documents List</a>
+    </div>
+    <div class="col-md-4">
+        <a href="/files/images" class="btn btn-primary w-100 py-3 mb-3">Image List</a>
+    </div>
+    <div class="col-md-4">
+        <a href="/files/videos" class="btn btn-success w-100 py-3 mb-3">Video List</a>
+    </div>
+    <div class="col-md-4">
+        <a href="/files/audios" class="btn btn-primary w-100 py-3 mb-3">Music List</a>
+    </div>
+    <div class="col-md-4">
+        <a href="/files/programs" class="btn btn-success w-100 py-3 mb-3">Program List</a>
+    </div>
+</div>
+
+<div class="bg-dark text-white text-center mb-4">
+    <div class="card-header">
+        <h3>Data Pribadi</h3>
+    </div>
+    <div class="">
+        {% if directories %}
+            <ul class="list-group">
+                {% for directory in directories %}
+                    <li class="list-group-item">
+                        <a href="/files/{{ directory }}" class="text-decoration-none">
+                            {{ directory }}
+                            <span class="badge bg-secondary">Custom</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No directories available. Create one using the button below!</p>
+        {% endif %}
+    </div>
+</div>
+<a href="/create_directory" class="btn btn-primary w-100 py-3 mb-4">Create New Directory</a>
+{% endblock %}
